@@ -1,0 +1,750 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Notezz — Premium BBA Notes</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --navy: #0D1B3E;
+    --navy-light: #162348;
+    --saffron: #FF6B00;
+    --saffron-light: #FF8C35;
+    --cream: #FFF8F0;
+    --cream-dark: #F5ECD8;
+    --gold: #E8A020;
+    --text-light: #F0E8D8;
+    --text-muted: #8896B3;
+    --white: #FFFFFF;
+    --card-bg: #1A2B52;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    background: var(--navy);
+    color: var(--white);
+    overflow-x: hidden;
+  }
+
+  /* ——— NAV ——— */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 1rem 5%;
+    background: rgba(13,27,62,0.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(255,107,0,0.2);
+  }
+  .logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.6rem; font-weight: 900;
+    color: var(--white);
+    letter-spacing: -0.5px;
+  }
+  .logo span { color: var(--saffron); }
+  nav ul { display: flex; gap: 2rem; list-style: none; }
+  nav ul a { color: var(--text-muted); text-decoration: none; font-size: 0.9rem; font-weight: 500; transition: color 0.2s; }
+  nav ul a:hover { color: var(--saffron); }
+  .nav-cta {
+    background: var(--saffron); color: var(--white);
+    border: none; padding: 0.6rem 1.4rem; border-radius: 50px;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-weight: 700; font-size: 0.9rem; cursor: pointer;
+    text-decoration: none; transition: background 0.2s, transform 0.1s;
+  }
+  .nav-cta:hover { background: var(--saffron-light); transform: translateY(-1px); }
+
+  /* ——— HERO ——— */
+  .hero {
+    min-height: 100vh;
+    display: flex; align-items: center;
+    padding: 8rem 5% 5rem;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse 80% 60% at 70% 50%, rgba(255,107,0,0.12) 0%, transparent 70%),
+                radial-gradient(ellipse 40% 40% at 10% 80%, rgba(232,160,32,0.08) 0%, transparent 60%);
+    pointer-events: none;
+  }
+  .hero-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center;
+    width: 100%; max-width: 1200px; margin: 0 auto;
+  }
+  .hero-badge {
+    display: inline-flex; align-items: center; gap: 0.5rem;
+    background: rgba(255,107,0,0.15); border: 1px solid rgba(255,107,0,0.4);
+    color: var(--saffron-light); padding: 0.4rem 1rem; border-radius: 50px;
+    font-size: 0.8rem; font-weight: 600; margin-bottom: 1.5rem;
+    text-transform: uppercase; letter-spacing: 1px;
+  }
+  .hero-badge::before { content: '★'; }
+  h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2.8rem, 5vw, 4.2rem);
+    line-height: 1.1; font-weight: 900;
+    margin-bottom: 1.5rem;
+    color: var(--white);
+  }
+  h1 em { color: var(--saffron); font-style: normal; display: block; }
+  .hero-sub {
+    font-size: 1.05rem; line-height: 1.7;
+    color: var(--text-muted); max-width: 480px; margin-bottom: 2.5rem;
+  }
+  .hero-btns { display: flex; gap: 1rem; flex-wrap: wrap; }
+  .btn-primary {
+    background: var(--saffron); color: var(--white);
+    border: none; padding: 0.9rem 2rem; border-radius: 50px;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-weight: 700; font-size: 1rem; cursor: pointer;
+    text-decoration: none; transition: all 0.2s;
+    display: inline-block;
+  }
+  .btn-primary:hover { background: var(--saffron-light); transform: translateY(-2px); box-shadow: 0 8px 24px rgba(255,107,0,0.35); }
+  .btn-outline {
+    border: 1.5px solid rgba(255,255,255,0.3); color: var(--white);
+    padding: 0.9rem 2rem; border-radius: 50px;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-weight: 600; font-size: 1rem; cursor: pointer;
+    text-decoration: none; display: inline-block; transition: all 0.2s;
+  }
+  .btn-outline:hover { border-color: var(--saffron); color: var(--saffron); }
+
+  /* Hero visual — floating card */
+  .hero-visual {
+    position: relative; display: flex; justify-content: center; align-items: center;
+  }
+  .floating-card {
+    background: var(--card-bg);
+    border: 1px solid rgba(255,107,0,0.25);
+    border-radius: 20px; padding: 2rem;
+    width: 100%; max-width: 360px;
+    animation: float 3.5s ease-in-out infinite;
+  }
+  @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-10px)} }
+  .card-tag { font-size: 0.75rem; color: var(--saffron); font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 0.75rem; }
+  .card-title { font-family: 'Playfair Display', serif; font-size: 1.4rem; margin-bottom: 0.5rem; }
+  .card-sub { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1.5rem; }
+  .card-pills { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1.5rem; }
+  .pill {
+    background: rgba(255,107,0,0.12); border: 1px solid rgba(255,107,0,0.3);
+    color: var(--saffron-light); padding: 0.3rem 0.75rem; border-radius: 50px;
+    font-size: 0.78rem; font-weight: 600;
+  }
+  .card-price-row { display: flex; align-items: center; justify-content: space-between; }
+  .card-price { font-family: 'Playfair Display', serif; font-size: 2rem; color: var(--saffron); font-weight: 900; }
+  .card-price small { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 0.8rem; color: var(--text-muted); font-weight: 400; }
+  .card-btn {
+    background: var(--saffron); color: var(--white);
+    border: none; padding: 0.7rem 1.4rem; border-radius: 50px;
+    font-weight: 700; font-size: 0.9rem; cursor: pointer;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+  }
+  .stats-row {
+    display: flex; gap: 1.5rem; margin-top: 3rem;
+  }
+  .stat { text-align: center; }
+  .stat-num { font-family: 'Playfair Display', serif; font-size: 2rem; font-weight: 900; color: var(--saffron); }
+  .stat-label { font-size: 0.78rem; color: var(--text-muted); font-weight: 500; }
+
+  /* ——— SECTION ——— */
+  section { padding: 5rem 5%; }
+  .section-inner { max-width: 1200px; margin: 0 auto; }
+  .section-tag {
+    font-size: 0.78rem; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 2px; color: var(--saffron); margin-bottom: 0.75rem;
+  }
+  h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2rem, 3.5vw, 2.8rem); font-weight: 900;
+    line-height: 1.15; margin-bottom: 1rem;
+  }
+  h2 span { color: var(--saffron); }
+  .section-sub { color: var(--text-muted); font-size: 1rem; line-height: 1.7; max-width: 560px; margin-bottom: 3rem; }
+
+  /* ——— WHY SECTION ——— */
+  .why-section { background: var(--navy-light); }
+  .why-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.5rem; }
+  .why-card {
+    background: var(--card-bg); border: 1px solid rgba(255,255,255,0.07);
+    border-radius: 16px; padding: 2rem;
+    transition: border-color 0.2s, transform 0.2s;
+  }
+  .why-card:hover { border-color: rgba(255,107,0,0.4); transform: translateY(-4px); }
+  .why-icon {
+    width: 48px; height: 48px; border-radius: 12px;
+    background: rgba(255,107,0,0.15); display: flex; align-items: center; justify-content: center;
+    font-size: 1.4rem; margin-bottom: 1.2rem;
+  }
+  .why-card h3 { font-size: 1rem; font-weight: 700; margin-bottom: 0.5rem; }
+  .why-card p { font-size: 0.88rem; color: var(--text-muted); line-height: 1.6; }
+
+  /* ——— SHOP SECTION ——— */
+  .shop-tabs {
+    display: flex; gap: 0.5rem; margin-bottom: 2.5rem; flex-wrap: wrap;
+  }
+  .tab-btn {
+    padding: 0.55rem 1.4rem; border-radius: 50px;
+    border: 1.5px solid rgba(255,255,255,0.15);
+    background: transparent; color: var(--text-muted);
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-weight: 600; font-size: 0.88rem; cursor: pointer;
+    transition: all 0.2s;
+  }
+  .tab-btn.active, .tab-btn:hover {
+    background: var(--saffron); border-color: var(--saffron); color: var(--white);
+  }
+  .shop-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 1.5rem; }
+  .shop-panel { display: none; }
+  .shop-panel.active { display: block; }
+  .note-card {
+    background: var(--card-bg); border: 1px solid rgba(255,255,255,0.07);
+    border-radius: 16px; padding: 1.5rem; position: relative;
+    transition: all 0.25s;
+  }
+  .note-card:hover { border-color: rgba(255,107,0,0.5); transform: translateY(-5px); box-shadow: 0 12px 32px rgba(0,0,0,0.3); }
+  .note-card.featured { border-color: var(--saffron); }
+  .featured-badge {
+    position: absolute; top: -12px; left: 50%; transform: translateX(-50%);
+    background: var(--saffron); color: var(--white);
+    font-size: 0.72rem; font-weight: 700; padding: 0.3rem 1rem; border-radius: 50px;
+    white-space: nowrap; text-transform: uppercase; letter-spacing: 0.5px;
+  }
+  .note-sem { font-size: 0.75rem; color: var(--saffron); font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 0.5rem; }
+  .note-title { font-family: 'Playfair Display', serif; font-size: 1.2rem; margin-bottom: 0.4rem; }
+  .note-desc { font-size: 0.83rem; color: var(--text-muted); margin-bottom: 1.2rem; line-height: 1.6; }
+  .note-subjects { display: flex; gap: 0.4rem; flex-wrap: wrap; margin-bottom: 1.5rem; }
+  .subject-chip {
+    background: rgba(255,255,255,0.06); color: var(--text-muted);
+    font-size: 0.72rem; padding: 0.25rem 0.6rem; border-radius: 6px; font-weight: 500;
+  }
+  .note-footer { display: flex; align-items: center; justify-content: space-between; }
+  .note-price { font-family: 'Playfair Display', serif; font-size: 1.6rem; color: var(--saffron); font-weight: 900; }
+  .note-price s { font-size: 0.9rem; color: var(--text-muted); font-weight: 400; font-family: 'Plus Jakarta Sans', sans-serif; margin-left: 0.3rem; }
+  .buy-btn {
+    background: var(--saffron); color: var(--white); border: none;
+    padding: 0.6rem 1.2rem; border-radius: 50px;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-weight: 700; font-size: 0.85rem; cursor: pointer;
+    text-decoration: none; transition: all 0.2s; display: inline-block;
+  }
+  .buy-btn:hover { background: var(--saffron-light); transform: scale(1.04); }
+
+  /* ——— HOW TO ORDER ——— */
+  .steps-section { background: var(--navy-light); }
+  .steps-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 2rem; }
+  .step { text-align: center; padding: 1rem; }
+  .step-num {
+    width: 56px; height: 56px; border-radius: 50%;
+    background: rgba(255,107,0,0.15); border: 2px solid rgba(255,107,0,0.4);
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Playfair Display', serif; font-size: 1.4rem; font-weight: 900;
+    color: var(--saffron); margin: 0 auto 1.2rem;
+  }
+  .step h3 { font-size: 1rem; font-weight: 700; margin-bottom: 0.5rem; }
+  .step p { font-size: 0.88rem; color: var(--text-muted); line-height: 1.6; }
+
+  /* ——— PAYMENT SECTION ——— */
+  .payment-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 2rem; }
+  .payment-card {
+    background: var(--card-bg); border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 20px; padding: 2.5rem; text-align: center;
+    transition: all 0.25s;
+  }
+  .payment-card:hover { border-color: rgba(255,107,0,0.4); transform: translateY(-4px); }
+  .payment-icon { font-size: 2.5rem; margin-bottom: 1rem; }
+  .payment-card h3 { font-size: 1.2rem; font-weight: 700; margin-bottom: 0.6rem; }
+  .payment-card p { font-size: 0.88rem; color: var(--text-muted); margin-bottom: 1.5rem; line-height: 1.6; }
+  .upi-id-box {
+    background: rgba(255,107,0,0.1); border: 1.5px dashed rgba(255,107,0,0.5);
+    border-radius: 10px; padding: 1rem 1.5rem;
+    font-family: monospace; font-size: 1.1rem;
+    color: var(--saffron); font-weight: 700; letter-spacing: 0.5px;
+    margin-bottom: 1rem; word-break: break-all;
+  }
+  .qr-placeholder {
+    width: 140px; height: 140px; border-radius: 12px;
+    background: var(--white); margin: 0 auto 1rem;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.78rem; color: #999; flex-direction: column; gap: 0.4rem;
+    padding: 1rem;
+  }
+  .qr-inner {
+    display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px;
+    width: 100%;
+  }
+  .qr-cell { aspect-ratio: 1; background: #1a1a1a; border-radius: 1px; }
+  .qr-cell.empty { background: transparent; }
+  .whatsapp-num {
+    font-size: 1.4rem; font-weight: 700; color: var(--white);
+    margin-bottom: 1rem;
+  }
+  .whatsapp-btn {
+    display: inline-flex; align-items: center; gap: 0.5rem;
+    background: #25D366; color: var(--white);
+    padding: 0.75rem 1.75rem; border-radius: 50px;
+    font-weight: 700; font-size: 0.95rem;
+    text-decoration: none; border: none; cursor: pointer;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    transition: all 0.2s;
+  }
+  .whatsapp-btn:hover { background: #1EB354; transform: scale(1.03); }
+
+  /* ——— TESTIMONIALS ——— */
+  .testi-section { background: var(--navy-light); }
+  .testi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1.5rem; }
+  .testi-card {
+    background: var(--card-bg); border: 1px solid rgba(255,255,255,0.07);
+    border-radius: 16px; padding: 1.8rem;
+  }
+  .stars { color: var(--gold); font-size: 1rem; letter-spacing: 2px; margin-bottom: 1rem; }
+  .testi-text { font-size: 0.92rem; line-height: 1.75; color: var(--text-light); margin-bottom: 1.5rem; font-style: italic; }
+  .testi-author { display: flex; align-items: center; gap: 0.75rem; }
+  .testi-avatar {
+    width: 38px; height: 38px; border-radius: 50%;
+    background: rgba(255,107,0,0.2); display: flex; align-items: center; justify-content: center;
+    font-weight: 700; font-size: 0.85rem; color: var(--saffron);
+  }
+  .testi-name { font-weight: 700; font-size: 0.9rem; }
+  .testi-college { font-size: 0.8rem; color: var(--text-muted); }
+
+  /* ——— FOOTER ——— */
+  footer {
+    background: #080F22;
+    border-top: 1px solid rgba(255,107,0,0.15);
+    padding: 3rem 5% 2rem;
+    text-align: center;
+  }
+  footer .logo { display: block; margin-bottom: 1rem; }
+  footer p { font-size: 0.88rem; color: var(--text-muted); margin-bottom: 0.5rem; }
+  footer .footer-links { display: flex; justify-content: center; gap: 2rem; margin: 1.5rem 0; flex-wrap: wrap; }
+  footer .footer-links a { color: var(--text-muted); text-decoration: none; font-size: 0.85rem; transition: color 0.2s; }
+  footer .footer-links a:hover { color: var(--saffron); }
+  .footer-copy { font-size: 0.78rem; color: rgba(136,150,179,0.6); margin-top: 1.5rem; }
+
+  /* ——— RESPONSIVE ——— */
+  @media (max-width: 768px) {
+    .hero-grid { grid-template-columns: 1fr; gap: 2.5rem; }
+    .hero-visual { display: none; }
+    nav ul { display: none; }
+    .stats-row { gap: 1rem; }
+    .hero { padding: 7rem 5% 4rem; }
+  }
+
+  /* ——— SCROLL ANIMATIONS ——— */
+  .fade-up {
+    opacity: 0; transform: translateY(24px);
+    transition: opacity 0.55s ease, transform 0.55s ease;
+  }
+  .fade-up.visible { opacity: 1; transform: translateY(0); }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="logo">Note<span>zz</span></div>
+  <ul>
+    <li><a href="#shop">Shop Notes</a></li>
+    <li><a href="#how">How It Works</a></li>
+    <li><a href="#payment">Payment</a></li>
+    <li><a href="#reviews">Reviews</a></li>
+  </ul>
+  <a href="#shop" class="nav-cta">Buy Notes →</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-grid">
+    <div class="hero-left">
+      <div class="hero-badge">Trusted by Students Across India</div>
+      <h1>Score Higher.<br><em>Study Smarter.</em></h1>
+      <p class="hero-sub">India's premium destination for BBA exam notes — handcrafted, exam-focused, and designed to help you ace every semester.</p>
+      <div class="hero-btns">
+        <a href="#shop" class="btn-primary">Browse All Notes</a>
+        <a href="#how" class="btn-outline">How It Works</a>
+      </div>
+      <div class="stats-row">
+        <div class="stat"><div class="stat-num">500+</div><div class="stat-label">Happy Students</div></div>
+        <div class="stat"><div class="stat-num">6</div><div class="stat-label">Semesters Covered</div></div>
+        <div class="stat"><div class="stat-num">99%</div><div class="stat-label">Exam Success Rate</div></div>
+      </div>
+    </div>
+    <div class="hero-visual">
+      <div class="floating-card">
+        <div class="card-tag">🔥 Best Seller</div>
+        <div class="card-title">BBA Full Bundle</div>
+        <div class="card-sub">All 3 Years · 6 Semesters · 30+ Subjects</div>
+        <div class="card-pills">
+          <span class="pill">Sem 1–6</span>
+          <span class="pill">PDF Format</span>
+          <span class="pill">Exam Ready</span>
+        </div>
+        <div class="card-price-row">
+          <div class="card-price">₹399 <small>/ full bundle</small></div>
+          <button class="card-btn" onclick="document.getElementById('shop').scrollIntoView({behavior:'smooth'})">Buy Now</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- WHY US -->
+<section class="why-section" id="why">
+  <div class="section-inner">
+    <div class="section-tag fade-up">Why Choose Us</div>
+    <h2 class="fade-up">Built for students, <span>by students</span></h2>
+    <p class="section-sub fade-up">We know what it takes to prepare for exams. Our notes are concise, accurate, and written in plain language.</p>
+    <div class="why-grid">
+      <div class="why-card fade-up">
+        <div class="why-icon">📚</div>
+        <h3>Exam-Focused Content</h3>
+        <p>Only what matters for your exam. No fluff, no filler — every page counts.</p>
+      </div>
+      <div class="why-card fade-up">
+        <div class="why-icon">⚡</div>
+        <h3>Instant PDF Delivery</h3>
+        <p>Get your notes within minutes of payment. Study anywhere, anytime.</p>
+      </div>
+      <div class="why-card fade-up">
+        <div class="why-icon">✅</div>
+        <h3>University Syllabus Aligned</h3>
+        <p>Mapped to your university's official syllabus. Nothing missing, nothing extra.</p>
+      </div>
+      <div class="why-card fade-up">
+        <div class="why-icon">💰</div>
+        <h3>Affordable for Every Student</h3>
+        <p>Premium notes at student-friendly prices. Big savings on bundles.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SHOP -->
+<section id="shop">
+  <div class="section-inner">
+    <div class="section-tag fade-up">Shop Notes</div>
+    <h2 class="fade-up">Choose your <span>package</span></h2>
+    <p class="section-sub fade-up">Pick by semester, by year, or save big with the full 3-year bundle.</p>
+
+    <div class="shop-tabs">
+      <button class="tab-btn active" onclick="switchTab(this,'semester')">By Semester</button>
+      <button class="tab-btn" onclick="switchTab(this,'year')">By Year</button>
+      <button class="tab-btn" onclick="switchTab(this,'bundle')">Mega Bundle</button>
+    </div>
+
+    <!-- SEMESTER TAB -->
+    <div class="shop-panel active" id="tab-semester">
+      <div class="shop-grid">
+        <!-- Sem 1 -->
+        <div class="note-card fade-up">
+          <div class="note-sem">Semester 1</div>
+          <div class="note-title">Foundation of Business</div>
+          <div class="note-desc">Core concepts of business, management principles & economics basics.</div>
+          <div class="note-subjects">
+            <span class="subject-chip">Principles of Mgmt</span>
+            <span class="subject-chip">Business Economics</span>
+            <span class="subject-chip">Accounting</span>
+          </div>
+          <div class="note-footer">
+            <div class="note-price">₹99 <s>₹199</s></div>
+            <a href="#payment" class="buy-btn">Buy Now</a>
+          </div>
+        </div>
+        <!-- Sem 2 -->
+        <div class="note-card fade-up">
+          <div class="note-sem">Semester 2</div>
+          <div class="note-title">Business Operations</div>
+          <div class="note-desc">Dive deeper into organizational behaviour, marketing & statistics.</div>
+          <div class="note-subjects">
+            <span class="subject-chip">Org. Behaviour</span>
+            <span class="subject-chip">Marketing Mgmt</span>
+            <span class="subject-chip">Business Stats</span>
+          </div>
+          <div class="note-footer">
+            <div class="note-price">₹99 <s>₹199</s></div>
+            <a href="#payment" class="buy-btn">Buy Now</a>
+          </div>
+        </div>
+        <!-- Sem 3 -->
+        <div class="note-card fade-up">
+          <div class="note-sem">Semester 3</div>
+          <div class="note-title">Finance & Strategy</div>
+          <div class="note-desc">Financial management, human resources & research methodology.</div>
+          <div class="note-subjects">
+            <span class="subject-chip">Financial Mgmt</span>
+            <span class="subject-chip">HRM</span>
+            <span class="subject-chip">Research Methods</span>
+          </div>
+          <div class="note-footer">
+            <div class="note-price">₹99 <s>₹199</s></div>
+            <a href="#payment" class="buy-btn">Buy Now</a>
+          </div>
+        </div>
+        <!-- Sem 4 -->
+        <div class="note-card fade-up">
+          <div class="note-sem">Semester 4</div>
+          <div class="note-title">Advanced Management</div>
+          <div class="note-desc">Production, operations, cost accounting & business law.</div>
+          <div class="note-subjects">
+            <span class="subject-chip">Production Mgmt</span>
+            <span class="subject-chip">Cost Accounting</span>
+            <span class="subject-chip">Business Law</span>
+          </div>
+          <div class="note-footer">
+            <div class="note-price">₹99 <s>₹199</s></div>
+            <a href="#payment" class="buy-btn">Buy Now</a>
+          </div>
+        </div>
+        <!-- Sem 5 -->
+        <div class="note-card fade-up">
+          <div class="note-sem">Semester 5</div>
+          <div class="note-title">Strategic Business</div>
+          <div class="note-desc">Entrepreneurship, strategic management & international business.</div>
+          <div class="note-subjects">
+            <span class="subject-chip">Entrepreneurship</span>
+            <span class="subject-chip">Strategic Mgmt</span>
+            <span class="subject-chip">Intl. Business</span>
+          </div>
+          <div class="note-footer">
+            <div class="note-price">₹99 <s>₹199</s></div>
+            <a href="#payment" class="buy-btn">Buy Now</a>
+          </div>
+        </div>
+        <!-- Sem 6 -->
+        <div class="note-card fade-up">
+          <div class="note-sem">Semester 6</div>
+          <div class="note-title">Business Capstone</div>
+          <div class="note-desc">Corporate governance, project management & electives.</div>
+          <div class="note-subjects">
+            <span class="subject-chip">Corp. Governance</span>
+            <span class="subject-chip">Project Mgmt</span>
+            <span class="subject-chip">Electives</span>
+          </div>
+          <div class="note-footer">
+            <div class="note-price">₹99 <s>₹199</s></div>
+            <a href="#payment" class="buy-btn">Buy Now</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- YEAR TAB -->
+    <div class="shop-panel" id="tab-year">
+      <div class="shop-grid">
+        <div class="note-card fade-up">
+          <div class="note-sem">Year 1 Bundle</div>
+          <div class="note-title">Semester 1 + 2</div>
+          <div class="note-desc">Complete first-year BBA notes. Perfect for clearing your foundation year.</div>
+          <div class="note-subjects">
+            <span class="subject-chip">6 Subjects</span>
+            <span class="subject-chip">2 Semesters</span>
+            <span class="subject-chip">Save ₹19</span>
+          </div>
+          <div class="note-footer">
+            <div class="note-price">₹179 <s>₹398</s></div>
+            <a href="#payment" class="buy-btn">Buy Now</a>
+          </div>
+        </div>
+        <div class="note-card fade-up">
+          <div class="note-sem">Year 2 Bundle</div>
+          <div class="note-title">Semester 3 + 4</div>
+          <div class="note-desc">Complete second-year BBA notes covering finance, strategy & law.</div>
+          <div class="note-subjects">
+            <span class="subject-chip">6 Subjects</span>
+            <span class="subject-chip">2 Semesters</span>
+            <span class="subject-chip">Save ₹19</span>
+          </div>
+          <div class="note-footer">
+            <div class="note-price">₹179 <s>₹398</s></div>
+            <a href="#payment" class="buy-btn">Buy Now</a>
+          </div>
+        </div>
+        <div class="note-card fade-up">
+          <div class="note-sem">Year 3 Bundle</div>
+          <div class="note-title">Semester 5 + 6</div>
+          <div class="note-desc">Final year mastery — entrepreneurship, strategy & corporate governance.</div>
+          <div class="note-subjects">
+            <span class="subject-chip">6 Subjects</span>
+            <span class="subject-chip">2 Semesters</span>
+            <span class="subject-chip">Save ₹19</span>
+          </div>
+          <div class="note-footer">
+            <div class="note-price">₹179 <s>₹398</s></div>
+            <a href="#payment" class="buy-btn">Buy Now</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- BUNDLE TAB -->
+    <div class="shop-panel" id="tab-bundle">
+      <div class="shop-grid" style="grid-template-columns: 1fr;">
+        <div class="note-card featured fade-up" style="max-width: 520px; margin: 0 auto;">
+          <div class="featured-badge">🔥 Best Value — Most Popular</div>
+          <div class="note-sem" style="margin-top:0.5rem;">Complete BBA Mega Bundle</div>
+          <div class="note-title" style="font-size:1.6rem;">All 6 Semesters</div>
+          <div class="note-desc">The ultimate BBA notes package — every semester, every subject, covering all 3 years of your degree. Pass every exam with confidence.</div>
+          <div class="note-subjects">
+            <span class="subject-chip">Sem 1 to 6</span>
+            <span class="subject-chip">30+ Subjects</span>
+            <span class="subject-chip">3 Years</span>
+            <span class="subject-chip">PDF Format</span>
+            <span class="subject-chip">Save ₹195</span>
+          </div>
+          <div class="note-footer">
+            <div class="note-price" style="font-size:2.2rem;">₹399 <s style="font-size:1rem; font-weight:400; font-family:'Plus Jakarta Sans',sans-serif; color:var(--text-muted);">₹594</s></div>
+            <a href="#payment" class="buy-btn" style="font-size:1rem; padding:0.8rem 1.8rem;">Buy Full Bundle →</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW TO ORDER -->
+<section class="steps-section" id="how">
+  <div class="section-inner">
+    <div class="section-tag fade-up">How It Works</div>
+    <h2 class="fade-up">Get your notes in <span>3 easy steps</span></h2>
+    <p class="section-sub fade-up">Simple, fast, and secure — your notes delivered straight to you.</p>
+    <div class="steps-grid">
+      <div class="step fade-up">
+        <div class="step-num">1</div>
+        <h3>Choose Your Package</h3>
+        <p>Pick a semester, year bundle, or the complete mega bundle from our shop above.</p>
+      </div>
+      <div class="step fade-up">
+        <div class="step-num">2</div>
+        <h3>Make Payment</h3>
+        <p>Pay via UPI, scan our QR code, or send a WhatsApp message. Quick &amp; safe.</p>
+      </div>
+      <div class="step fade-up">
+        <div class="step-num">3</div>
+        <h3>Receive Your Notes</h3>
+        <p>We send your PDF notes directly to your WhatsApp or email within minutes.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PAYMENT SECTION -->
+<section id="payment">
+  <div class="section-inner">
+    <div class="section-tag fade-up">Payment Methods</div>
+    <h2 class="fade-up">Pay easily, <span>any way you like</span></h2>
+    <p class="section-sub fade-up">After payment, send your receipt on WhatsApp and get your notes instantly.</p>
+    <div class="payment-grid">
+
+      <!-- UPI -->
+      <div class="payment-card fade-up">
+        <div class="payment-icon">💳</div>
+        <h3>Pay via UPI</h3>
+        <p>Use any UPI app — GPay, PhonePe, Paytm, BHIM, or your bank app.</p>
+        <div class="upi-id-box">7742781560@ptsbi</div>
+        <p style="font-size:0.8rem; color:var(--text-muted);">Open any UPI app &amp; pay to this ID</p>
+      </div>
+
+      <!-- QR Code -->
+      <div class="payment-card fade-up">
+        <div class="payment-icon">📱</div>
+        <h3>Scan QR Code</h3>
+        <p>Open any payment app and scan the QR code to pay instantly.</p>
+        <img src="data:image/png;base64,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" alt="UPI QR Code" style="width:160px; height:160px; border-radius:12px; margin:0 auto 1rem; display:block; object-fit:contain; background:#fff; padding:8px;">
+      </div>
+
+      <!-- WhatsApp -->
+      <div class="payment-card fade-up">
+        <div class="payment-icon">💬</div>
+        <h3>Order via WhatsApp</h3>
+        <p>Message us on WhatsApp with your chosen package. We'll guide you through.</p>
+        <div class="whatsapp-num">+91 77427 81560</div>
+        <a href="https://wa.me/917742781560?text=Hi!%20I%20want%20to%20buy%20BBA%20notes%20from%20Notezz.%20Please%20share%20payment%20details." class="whatsapp-btn">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.123.553 4.116 1.52 5.847L.057 23.882l6.204-1.627A11.944 11.944 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.89 0-3.656-.522-5.166-1.427l-.37-.22-3.684.966.983-3.594-.241-.381A9.944 9.944 0 012 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/></svg>
+          Chat on WhatsApp
+        </a>
+      </div>
+
+    </div>
+    <div style="text-align:center; margin-top:2rem; padding:1.5rem; background:rgba(255,107,0,0.08); border:1px dashed rgba(255,107,0,0.35); border-radius:14px; max-width:600px; margin:2rem auto 0;">
+      <p style="color:var(--text-muted); font-size:0.9rem;line-height:1.7;">After making your payment, <strong style="color:var(--white);">screenshot your payment</strong> and send it to our WhatsApp number above. Your notes will be delivered to you within <strong style="color:var(--saffron);">2–5 minutes</strong>. ⚡</p>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section class="testi-section" id="reviews">
+  <div class="section-inner">
+    <div class="section-tag fade-up">Student Reviews</div>
+    <h2 class="fade-up">What students <span>are saying</span></h2>
+    <p class="section-sub fade-up">Don't take our word for it — hear from students who've already scored big.</p>
+    <div class="testi-grid">
+      <div class="testi-card fade-up">
+        <div class="stars">★★★★★</div>
+        <p class="testi-text">"Cleared my Sem 3 with these notes. Super precise, no unnecessary content. Worth every rupee!"</p>
+        <div class="testi-author">
+          <div class="testi-avatar">RK</div>
+          <div><div class="testi-name">Rahul K.</div><div class="testi-college">BBA 2nd Year, Jaipur</div></div>
+        </div>
+      </div>
+      <div class="testi-card fade-up">
+        <div class="stars">★★★★★</div>
+        <p class="testi-text">"Bought the full bundle and it covered everything in my syllabus. Delivery was super fast!"</p>
+        <div class="testi-author">
+          <div class="testi-avatar">PS</div>
+          <div><div class="testi-name">Priya S.</div><div class="testi-college">BBA 3rd Year, Delhi</div></div>
+        </div>
+      </div>
+      <div class="testi-card fade-up">
+        <div class="stars">★★★★★</div>
+        <p class="testi-text">"Best notes I've found online. The format is clean, easy to revise the night before exams!"</p>
+        <div class="testi-author">
+          <div class="testi-avatar">AM</div>
+          <div><div class="testi-name">Ankit M.</div><div class="testi-college">BBA 1st Year, Mumbai</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="logo">Note<span style="color:var(--saffron)">zz</span></div>
+  <p>Premium BBA Notes for Students Across India</p>
+  <div class="footer-links">
+    <a href="#shop">Shop Notes</a>
+    <a href="#how">How It Works</a>
+    <a href="#payment">Payment</a>
+    <a href="#reviews">Reviews</a>
+  </div>
+  <p style="font-size:0.82rem; color:var(--text-muted);">📧 Contact us on WhatsApp for any queries</p>
+  <div class="footer-copy">© 2026 Notezz · Made with ❤️ in India</div>
+</footer>
+
+<script>
+  function switchTab(btn, tabId) {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.shop-panel').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('tab-' + tabId).classList.add('active');
+    document.querySelectorAll('#tab-' + tabId + ' .fade-up').forEach(el => {
+      el.classList.remove('visible');
+      setTimeout(() => el.classList.add('visible'), 50);
+    });
+  }
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+  }, { threshold: 0.1 });
+
+  document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+</script>
+</body>
+</html>
